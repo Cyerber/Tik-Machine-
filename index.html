@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlackChain CopyPilot</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#080b10;color:#eef2f7}
+.app{max-width:1250px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.brand{font-size:25px;font-weight:800;letter-spacing:.4px}.brand span{color:#55e6a5}
+.status{font-size:12px;color:#8d9aaa;border:1px solid #202936;padding:8px 12px;border-radius:999px}
+nav{display:flex;gap:8px;overflow:auto;margin-bottom:20px}
+nav button,.btn{background:#111720;color:#aeb9c7;border:1px solid #232d39;padding:10px 14px;border-radius:9px;cursor:pointer}
+nav button.active,.btn.primary{background:#55e6a5;color:#06100b;border-color:#55e6a5;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#0e131a;border:1px solid #202a35;border-radius:14px;padding:18px}
+.kpi small{color:#7e8a9a}.kpi strong{display:block;font-size:25px;margin-top:8px}.green{color:#55e6a5}.red{color:#ff6e7a}.yellow{color:#ffd166}
+.section{margin-top:18px}.section h2{font-size:17px;margin:0 0 12px}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid #202833;font-size:13px}th{color:#7e8a9a;font-weight:500}
+.badge{padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700}.good{background:#123b2b;color:#55e6a5}.watch{background:#3d3214;color:#ffd166}.block{background:#3e171c;color:#ff7b85}
+.score{font-weight:800}.meter{height:7px;background:#202832;border-radius:10px;overflow:hidden;margin-top:7px}.meter i{display:block;height:100%;background:#55e6a5}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field label{display:block;color:#8d99a8;font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border-radius:8px;border:1px solid #27313d;background:#090d12;color:#fff}
+.big{font-size:32px;font-weight:800;margin:8px 0}.muted{color:#8490a0;font-size:13px;line-height:1.5}
+.alert{padding:12px;border-radius:10px;background:#241b0b;border:1px solid #4a3916;color:#ffd166;margin-top:12px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hidden{display:none}
+.log{max-height:180px;overflow:auto;background:#090d12;border-radius:9px;padding:10px;font:12px ui-monospace,monospace;color:#9eabb9}
+.log div{padding:5px 0;border-bottom:1px solid #151c24}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media(max-width:520px){.app{padding:14px}.grid,.form{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">BLACKCHAIN <span>CopyPilot</span></div>
+  <div class="status">● DEMO / SIMULATION MODE</div>
+</header>
+
+<nav>
+<button class="active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button onclick="showTab('strategies',this)">Strategy Scout</button>
+<button onclick="showTab('calculator',this)">$100/Day Lab</button>
+<button onclick="showTab('risk',this)">Risk Engine</button>
+<button onclick="showTab('sim',this)">Copy Simulator</button>
+</nav>
+
+<section id="dashboard">
+<div class="grid">
+ <div class="card kpi"><small>Portfolio</small><strong id="port">$2,000</strong><span class="green">Demo balance</span></div>
+ <div class="card kpi"><small>Daily Risk Limit</small><strong id="riskKpi">$40</strong><span class="yellow">2.0% configured</span></div>
+ <div class="card kpi"><small>Current Exposure</small><strong id="expKpi">$800</strong><span class="green">40% allocated</span></div>
+ <div class="card kpi"><small>Copy Status</small><strong class="green">PAUSED</strong><span class="muted">Safety first</span></div>
+</div>
+<div class="two section">
+<div class="card">
+<h2>Strategy Watchlist</h2>
+<table><thead><tr><th>Strategy</th><th>Return</th><th>Drawdown</th><th>Score</th><th>Status</th></tr></thead>
+<tbody id="watch"></tbody></table>
+</div>
+<div class="card">
+<h2>Risk Monitor</h2>
+<div class="muted">Account drawdown</div><div class="big green">3.8%</div>
+<div class="meter"><i style="width:19%"></i></div>
+<div class="muted" style="margin-top:15px">Daily loss used</div><div class="big">$12.40</div>
+<div class="meter"><i style="width:31%"></i></div>
+<div class="alert">Copying is currently paused. No live orders are being placed.</div>
+</div>
+</div>
+</section>
+
+<section id="strategies" class="hidden">
+<div class="card">
+<h2>Strategy Scout</h2>
+<p class="muted">Demo data below shows how CopyPilot evaluates strategies. Connect a supported account/API in a later version for live data.</p>
+<table><thead><tr><th>Strategy</th><th>Return</th><th>Max DD</th><th>Trades</th><th>Consistency</th><th>Risk</th><th>Score</th><th>Action</th></tr></thead>
+<tbody id="strategiesTable"></tbody></table>
+</div>
+</section>
+
+<section id="calculator" class="hidden">
+<div class="two">
+<div class="card">
+<h2>$100/Day Lab</h2>
+<p class="muted">This calculator does not promise returns. It shows the daily return required to reach a target.</p>
+<div class="form">
+<div class="field"><label>Starting capital ($)</label><input id="capital" type="number" value="2000"></div>
+<div class="field"><label>Daily target ($)</label><input id="target" type="number" value="100"></div>
+</div>
+<div class="big" id="required">5.00%</div>
+<div class="muted">Required return per day</div>
+<div id="calcMsg" class="alert">A 5% daily target is aggressive. Use the risk engine to cap losses rather than increasing leverage to chase the target.</div>
+</div>
+<div class="card">
+<h2>Scenario</h2>
+<div class="muted">At your starting capital:</div>
+<table><tbody id="scenarios"></tbody></table>
+</div>
+</div>
+</section>
+
+<section id="risk" class="hidden">
+<div class="two">
+<div class="card">
+<h2>Risk Engine</h2>
+<div class="form">
+<div class="field"><label>Account balance ($)</label><input id="balance" type="number" value="2000"></div>
+<div class="field"><label>Max daily loss (%)</label><input id="dailyRisk" type="number" value="2" step=".1"></div>
+<div class="field"><label>Max portfolio drawdown (%)</label><input id="maxDD" type="number" value="10" step=".5"></div>
+<div class="field"><label>Copy allocation (%)</label><input id="allocation" type="number" value="40" step="1"></div>
+</div>
+<div class="controls"><button class="btn primary" onclick="updateRisk()">Update Risk Rules</button></div>
+<div id="riskOutput" class="alert">Daily loss cap: $40.00 · Maximum portfolio drawdown: $200.00 · Copy allocation: $800.00</div>
+</div>
+<div class="card">
+<h2>Kill Switch</h2>
+<p class="muted">If the configured loss or drawdown limit is reached, the simulator will pause copying.</p>
+<button class="btn" onclick="killSwitch()">Trigger Safety Pause</button>
+<div id="killMsg" style="margin-top:14px" class="green">System armed.</div>
+</div>
+</div>
+</section>
+
+<section id="sim" class="hidden">
+<div class="two">
+<div class="card">
+<h2>Copy Simulator</h2>
+<p class="muted">Simulation only. No real Exness orders are sent by this HTML file.</p>
+<div class="form">
+<div class="field"><label>Strategy allocation ($)</label><input id="simAlloc" type="number" value="800"></div>
+<div class="field"><label>Simulated strategy return (%)</label><input id="simReturn" type="number" value="3"></div>
+</div>
+<div class="controls">
+<button class="btn primary" onclick="simulateTrade()">Run Simulation</button>
+<button class="btn" onclick="resetSim()">Reset</button>
+</div>
+<div class="big" id="simResult">$800.00</div>
+<div class="muted" id="simText">Simulated allocated capital</div>
+</div>
+<div class="card">
+<h2>Event Log</h2>
+<div class="log" id="log"><div>System initialized in demo mode.</div></div>
+</div>
+</div>
+</section>
+</div>
+
+<script>
+const strategies=[
+{name:"Atlas FX",ret:38,dd:7.4,trades:184,cons:82,risk:"Moderate"},
+{name:"Momentum Edge",ret:71,dd:22.5,trades:91,cons:64,risk:"High"},
+{name:"Steady Macro",ret:24,dd:4.8,trades:312,cons:91,risk:"Low"},
+{name:"Rapid Alpha",ret:126,dd:41.2,trades:66,cons:48,risk:"Very High"},
+{name:"Balanced Core",ret:31,dd:8.9,trades:227,cons:86,risk:"Moderate"}
+];
+
+function score(s){
+ let x=50 + Math.min(s.ret,80)*.15 + s.cons*.35 - s.dd*.9;
+ if(s.risk==="High")x-=8;if(s.risk==="Very High")x-=18;if(s.risk==="Low")x+=4;
+ return Math.max(0,Math.min(100,Math.round(x)));
+}
+function status(sc){return sc>=80?["GOOD","good"]:sc>=65?["WATCH","watch"]:["BLOCK","block"]}
+
+function renderStrategies(){
+ const rows=strategies.map(s=>{
+  const sc=score(s),st=status(sc);
+  return `<tr><td><b>${s.name}</b></td><td class="green">+${s.ret}%</td><td class="${s.dd>20?'red':''}">${s.dd}%</td><td>${s.trades}</td><td>${s.cons}/100</td><td>${s.risk}</td><td class="score">${sc}</td><td><span class="badge ${st[1]}">${st[0]}</span></td></tr>`
+ }).join("");
+ document.getElementById("strategiesTable").innerHTML=rows;
+ document.getElementById("watch").innerHTML=strategies.slice(0,5).map(s=>{
+ const sc=score(s),st=status(sc);
+ return `<tr><td>${s.name}</td><td class="green">+${s.ret}%</td><td>${s.dd}%</td><td>${sc}</td><td><span class="badge ${st[1]}">${st[0]}</span></td></tr>`
+ }).join("");
+}
+function showTab(id,btn){
+ document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+}
+function calc(){
+ const c=Math.max(1,+document.getElementById("capital").value||1),t=+document.getElementById("target").value||0;
+ const p=t/c*100;
+ document.getElementById("required").textContent=p.toFixed(2)+"%";
+ document.getElementById("calcMsg").textContent=p>5?"This target requires more than 5% per day. That is highly aggressive; do not solve the gap by blindly increasing leverage.":p>2?"This target requires an aggressive daily return. Risk controls matter more than chasing the target.":"The target is lower relative to capital, but losses can still compound. Use predefined risk limits.";
+ document.getElementById("scenarios").innerHTML=[1,2,3,5].map(r=>`<tr><td>${r}% daily</td><td class="green">$${(c*r/100).toFixed(2)}</td></tr>`).join("");
+}
+function updateRisk(){
+ const b=+document.getElementById("balance").value||0,d=+document.getElementById("dailyRisk").value||0,m=+document.getElementById("maxDD").value||0,a=+document.getElementById("allocation").value||0;
+ document.getElementById("riskOutput").textContent=`Daily loss cap: $${(b*d/100).toFixed(2)} · Maximum portfolio drawdown: $${(b*m/100).toFixed(2)} · Copy allocation: $${(b*a/100).toFixed(2)}`;
+ document.getElementById("riskKpi").textContent="$"+(b*d/100).toFixed(0);
+ document.getElementById("expKpi").textContent="$"+(b*a/100).toFixed(0);
+}
+function log(msg){
+ const el=document.getElementById("log");const d=document.createElement("div");
+ d.textContent=new Date().toLocaleTimeString()+" — "+msg;el.prepend(d);
+}
+function simulateTrade(){
+ const a=+document.getElementById("simAlloc").value||0,r=+document.getElementById("simReturn").value||0;
+ const profit=a*r/100;
+ document.getElementById("simResult").textContent="$"+(a+profit).toFixed(2);
+ document.getElementById("simText").textContent=`Simulated P/L: ${profit>=0?"+":""}$${profit.toFixed(2)} (${r}%)`;
+ log(`Simulation: $${a.toFixed(2)} allocation at ${r}% = ${profit>=0?"+":""}$${profit.toFixed(2)}.`);
+}
+function resetSim(){
+ document.getElementById("simAlloc").value=800;document.getElementById("simReturn").value=3;
+ document.getElementById("simResult").textContent="$800.00";document.getElementById("simText").textContent="Simulated allocated capital";log("Simulation reset.");
+}
+function killSwitch(){
+ document.getElementById("killMsg").textContent="SAFETY PAUSE ACTIVE — copying disabled.";
+ document.getElementById("killMsg").className="red";
+ document.querySelector("#dashboard .kpi:nth-child(4) strong").textContent="PAUSED";
+ log("Safety pause triggered. No live orders are permitted.");
+}
+["capital","target"].forEach(id=>document.getElementById(id).addEventListener("input",calc));
+renderStrategies();calc();updateRisk();
+</script>
+</body>
+</html>
