@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BlackChain CopyPilot v2</title>
+<style>
+:root{--bg:#070a0e;--panel:#0d131a;--panel2:#111923;--line:#202c38;--text:#eef4f8;--muted:#8290a0;--green:#55e6a5;--red:#ff6875;--yellow:#ffd166;--blue:#65a9ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1280px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:24px;font-weight:850}.logo span{color:var(--green)}.pill{border:1px solid var(--line);padding:7px 11px;border-radius:999px;color:var(--yellow);font-size:12px}
+nav{display:flex;gap:7px;overflow:auto;margin-bottom:18px}button{cursor:pointer;border:1px solid var(--line);background:#101720;color:#b8c3cf;border-radius:9px;padding:10px 13px}button.active,button.primary{background:var(--green);color:#06100b;border-color:var(--green);font-weight:750}.danger{border-color:#63303a;color:#ff8a94}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px}.kpi small,.muted{color:var(--muted)}.kpi b{display:block;font-size:25px;margin:8px 0}.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}.section{margin-top:14px}.two{display:grid;grid-template-columns:1.7fr 1fr;gap:12px}h2{font-size:16px;margin:0 0 10px}h3{font-size:14px;margin:15px 0 8px}table{width:100%;border-collapse:collapse}th,td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}th{color:var(--muted);font-weight:500}.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800}.good{background:#103a2b;color:var(--green)}.watch{background:#3a3012;color:var(--yellow)}.block{background:#421a21;color:#ff8993}.bar{height:7px;background:#202a34;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green)}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.field input,.field select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#080c11;color:white}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.alert{padding:11px;border-radius:9px;margin-top:12px;background:#241c0b;border:1px solid #4a3916;color:var(--yellow)}.ok{background:#0d2a20;border-color:#174b39;color:var(--green)}.log{background:#080c11;border:1px solid var(--line);border-radius:9px;max-height:220px;overflow:auto;padding:9px;font:11px ui-monospace,monospace}.log div{padding:5px 0;border-bottom:1px solid #151c23}.hidden{display:none}.big{font-size:30px;font-weight:850}.metric{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}.tag{font-size:11px;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media(max-width:520px){.wrap{padding:13px}.grid,.form{grid-template-columns:1fr}.top{align-items:flex-start;gap:10px;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div class="logo">BLACKCHAIN <span>CopyPilot</span> <small style="font-size:11px;color:#667381">v2</small></div><div class="pill" id="mode">● PAPER / CONNECTOR-READY</div></div>
+<nav>
+<button class="active" onclick="tab('home',this)">Overview</button>
+<button onclick="tab('scout',this)">Live Scout</button>
+<button onclick="tab('risk',this)">Risk Engine</button>
+<button onclick="tab('paper',this)">Paper Copy</button>
+<button onclick="tab('connect',this)">Connection</button>
+</nav>
+
+<section id="home">
+<div class="grid">
+<div class="card kpi"><small>Paper Equity</small><b id="eq">$2,000.00</b><span class="green">+0.00%</span></div>
+<div class="card kpi"><small>Daily P/L</small><b id="pnl">$0.00</b><span class="muted">vs $40 loss cap</span></div>
+<div class="card kpi"><small>Allocated</small><b id="allocated">$800.00</b><span class="blue">40%</span></div>
+<div class="card kpi"><small>Copy Engine</small><b id="engine" class="yellow">PAUSED</b><span class="muted">paper only</span></div>
+</div>
+<div class="two section">
+<div class="card"><h2>Top filtered strategies</h2><table><thead><tr><th>Strategy</th><th>Score</th><th>Return</th><th>DD</th><th>Decision</th></tr></thead><tbody id="top"></tbody></table></div>
+<div class="card"><h2>System health</h2><div class="metric"><span>Market feed</span><b class="yellow">DEMO</b></div><div class="metric"><span>Account feed</span><b class="yellow">DEMO</b></div><div class="metric"><span>Risk rules</span><b class="green">ARMED</b></div><div class="metric"><span>Live execution</span><b class="red">OFF</b></div><div class="alert ok">No real orders can be placed by this version.</div></div>
+</div>
+</section>
+
+<section id="scout" class="hidden">
+<div class="card"><h2>Live Strategy Scout</h2><p class="muted">The demo feed below represents the data pipeline. The connector tab is where an MT5/data bridge can later be attached.</p>
+<table><thead><tr><th>Strategy</th><th>Return</th><th>Max DD</th><th>Trades</th><th>Consistency</th><th>Risk</th><th>Score</th><th>Decision</th></tr></thead><tbody id="all"></tbody></table>
+<div class="actions"><button class="primary" onclick="rescan()">↻ Rescan strategies</button></div></div>
+</section>
+
+<section id="risk" class="hidden">
+<div class="two">
+<div class="card"><h2>Risk Engine</h2><div class="form">
+<div class="field"><label>Paper account ($)</label><input id="balance" type="number" value="2000"></div>
+<div class="field"><label>Max daily loss (%)</label><input id="riskPct" type="number" value="2" step=".1"></div>
+<div class="field"><label>Max account drawdown (%)</label><input id="ddPct" type="number" value="10" step=".5"></div>
+<div class="field"><label>Max copy allocation (%)</label><input id="allocPct" type="number" value="40"></div>
+<div class="field"><label>Stop-copy after losing streak</label><input id="streak" type="number" value="4"></div>
+<div class="field"><label>Minimum strategy score</label><input id="minScore" type="number" value="75"></div>
+</div><div class="actions"><button class="primary" onclick="applyRisk()">Apply rules</button></div><div id="riskText" class="alert"></div></div>
+<div class="card"><h2>Automatic safeguards</h2><div class="metric"><span>Daily loss cap</span><b id="dailyCap">$40</b></div><div class="metric"><span>Drawdown cap</span><b id="ddCap">$200</b></div><div class="metric"><span>Allocation cap</span><b id="allocCap">$800</b></div><div class="metric"><span>Min score</span><b id="scoreCap">75</b></div><div class="alert">If a rule is breached in paper mode, CopyPilot pauses the copy engine.</div></div>
+</div>
+</section>
+
+<section id="paper" class="hidden">
+<div class="two">
+<div class="card"><h2>Paper Copy Engine</h2><p class="muted">Simulates what the execution layer would do after a strategy passes the filters.</p>
+<div class="form"><div class="field"><label>Strategy</label><select id="paperStrategy"></select></div><div class="field"><label>Simulated return (%)</label><input id="paperReturn" type="number" value="1.5" step=".1"></div></div>
+<div class="actions"><button class="primary" onclick="startPaper()">Start paper copy</button><button onclick="runPaper()">Simulate period</button><button class="danger" onclick="pauseEngine()">Pause</button></div>
+<div id="paperStatus" class="alert">Engine is paused.</div></div>
+<div class="card"><h2>Execution Log</h2><div class="log" id="log"><div>CopyPilot initialized — paper mode.</div></div></div>
+</div>
+</section>
+
+<section id="connect" class="hidden">
+<div class="two">
+<div class="card"><h2>MT5 / Exness Connector</h2><p class="muted">This interface is prepared for a secure backend or MT5 bridge. Do not paste your broker password or trading credentials into this HTML page.</p>
+<div class="form"><div class="field"><label>Connection type</label><select id="connType"><option>MT5 demo bridge</option><option>Backend API bridge</option><option>Data-only feed</option></select></div><div class="field"><label>Environment</label><select><option>Demo</option><option>Paper</option><option disabled>Live — locked</option></select></div></div>
+<div class="actions"><button class="primary" onclick="testConnection()">Test connector</button></div><div id="connMsg" class="alert">Not connected. No credentials are stored here.</div></div>
+<div class="card"><h2>What happens after connection</h2><div class="metric"><span>1. Receive strategy/account data</span><b>→</b></div><div class="metric"><span>2. Apply BlackChain filters</span><b>→</b></div><div class="metric"><span>3. Calculate allocation</span><b>→</b></div><div class="metric"><span>4. Paper-test execution</span><b>→</b></div><div class="metric"><span>5. Live execution</span><b class="red">LOCKED</b></div></div>
+</div>
+</section>
+</div>
+<script>
+const data=[
+["Atlas FX",38,7.4,184,82,"Moderate"],
+["Momentum Edge",71,22.5,91,64,"High"],
+["Steady Macro",24,4.8,312,91,"Low"],
+["Rapid Alpha",126,41.2,66,48,"Very High"],
+["Balanced Core",31,8.9,227,86,"Moderate"],
+["Trend Matrix",54,12.1,203,77,"Moderate"],
+["Capital Shield",18,3.9,405,94,"Low"]
+];
+let rules={balance:2000,risk:2,dd:10,alloc:40,streak:4,min:75}, engine=false, equity=2000,pnl=0;
+function score(x){let [n,r,dd,t,c,ri]=x;let s=50+Math.min(r,80)*.15+c*.35-dd*.9;if(ri=="High")s-=8;if(ri=="Very High")s-=18;if(ri=="Low")s+=4;return Math.max(0,Math.min(100,Math.round(s)))}
+function dec(s){return s>=rules.min?["PASS","good"]:s>=rules.min-10?["WATCH","watch"]:["BLOCK","block"]}
+function render(){
+ let rows=data.map(x=>{let s=score(x),d=dec(s);return `<tr><td><b>${x[0]}</b></td><td class="green">+${x[1]}%</td><td class="${x[2]>20?'red':''}">${x[2]}%</td><td>${x[3]}</td><td>${x[4]}</td><td>${x[5]}</td><td><b>${s}</b></td><td><span class="badge ${d[1]}">${d[0]}</span></td></tr>`}).join("");
+ document.getElementById("all").innerHTML=rows;
+ document.getElementById("top").innerHTML=data.slice().sort((a,b)=>score(b)-score(a)).slice(0,5).map(x=>{let s=score(x),d=dec(s);return `<tr><td>${x[0]}</td><td>${s}</td><td class="green">+${x[1]}%</td><td>${x[2]}%</td><td><span class="badge ${d[1]}">${d[0]}</span></td></tr>`}).join("");
+ document.getElementById("paperStrategy").innerHTML=data.filter(x=>score(x)>=rules.min).map(x=>`<option>${x[0]}</option>`).join("");
+}
+function tab(id,b){document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active")}
+function applyRisk(){
+ rules.balance=+balance.value||2000;rules.risk=+riskPct.value||2;rules.dd=+ddPct.value||10;rules.alloc=+allocPct.value||40;rules.streak=+streak.value||4;rules.min=+minScore.value||75;
+ document.getElementById("dailyCap").textContent="$"+(rules.balance*rules.risk/100).toFixed(2);
+ document.getElementById("ddCap").textContent="$"+(rules.balance*rules.dd/100).toFixed(2);
+ document.getElementById("allocCap").textContent="$"+(rules.balance*rules.alloc/100).toFixed(2);
+ document.getElementById("scoreCap").textContent=rules.min;
+ document.getElementById("riskText").textContent=`Rules applied: daily loss $${(rules.balance*rules.risk/100).toFixed(2)}, drawdown $${(rules.balance*rules.dd/100).toFixed(2)}, allocation $${(rules.balance*rules.alloc/100).toFixed(2)}.`;
+ equity=rules.balance;updateKpi();render();log("Risk rules updated.");
+}
+function updateKpi(){document.getElementById("eq").textContent="$"+equity.toFixed(2);document.getElementById("pnl").textContent=(pnl>=0?"+":"-")+"$"+Math.abs(pnl).toFixed(2);document.getElementById("pnl").className=pnl>=0?"green":"red";document.getElementById("allocated").textContent="$"+(rules.balance*rules.alloc/100).toFixed(2)}
+function log(x){let d=document.createElement("div");d.textContent=new Date().toLocaleTimeString()+" — "+x;document.getElementById("log").prepend(d)}
+function startPaper(){engine=true;document.getElementById("engine").textContent="RUNNING";document.getElementById("engine").className="green";document.getElementById("paperStatus").textContent="Paper copy engine running. No real orders are sent.";document.getElementById("paperStatus").className="alert ok";log("Paper copy engine started.")}
+function pauseEngine(){engine=false;document.getElementById("engine").textContent="PAUSED";document.getElementById("engine").className="yellow";document.getElementById("paperStatus").textContent="Engine paused — no simulated execution will run.";document.getElementById("paperStatus").className="alert";log("Copy engine paused.")}
+function runPaper(){
+ if(!engine){log("Simulation blocked: engine is paused.");return}
+ let ret=+paperReturn.value||0,alloc=rules.balance*rules.alloc/100,change=alloc*ret/100;
+ pnl+=change;equity=rules.balance+pnl;
+ let dailyCap=rules.balance*rules.risk/100;
+ if(pnl<=-dailyCap){pauseEngine();log("SAFETY STOP: daily loss cap reached.")}
+ updateKpi();log(`Paper period: ${ret>=0?"+":""}${ret}% on $${alloc.toFixed(2)} = ${change>=0?"+":""}$${change.toFixed(2)}.`);
+}
+function rescan(){render();log("Strategy universe rescanned using current filters.")}
+function testConnection(){document.getElementById("connMsg").textContent="Connector test interface is ready, but no live broker credentials or bridge are configured. Nothing was sent.";document.getElementById("connMsg").className="alert ok";log("Connector test completed in safe mode.")}
+render();applyRisk();
+</script>
+</body>
+</html>
